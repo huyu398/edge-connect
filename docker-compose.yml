@@ -1,0 +1,14 @@
+version: '2.4'
+services:
+  app:
+    build: .
+    shm_size: 16g
+    runtime: nvidia
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+    tty: true
+    volumes:
+      - ./src:/workspace/src
+      - ./main.py:/workspace/main.py
+      - ./test.py:/workspace/test.py
+      - ./train.py:/workspace/train.py

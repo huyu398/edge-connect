@@ -6,3 +6,5 @@ pillow >= 6.2.0
 opencv-python ~= 3.4.0
 scikit-image ~= 0.14.0
 pyaml
+https://download.pytorch.org/whl/cu100/torch-1.4.0%2Bcu100-cp37-cp37m-linux_x86_64.whl
+torchvision == 0.5.0
