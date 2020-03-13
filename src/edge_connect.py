@@ -323,9 +323,13 @@ class EdgeConnect():
 
             # inpaint with edge model / joint model
             else:
-                edges = self.edge_model(images_gray, edges, masks).detach()
-                outputs = self.inpaint_model(images, edges, masks)
-                outputs_merged = (outputs * masks) + (images * (1 - masks))
+                try:
+                    edges = self.edge_model(images_gray, edges, masks).detach()
+                    outputs = self.inpaint_model(images, edges, masks)
+                    outputs_merged = (outputs * masks) + (images * (1 - masks))
+                except Exception as e:
+                    print(e)
+                    continue
 
             output = self.postprocess(outputs_merged)[0]
             path = os.path.join(self.results_path, name)

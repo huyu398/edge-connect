@@ -12,3 +12,4 @@ services:
       - ./main.py:/workspace/main.py
       - ./test.py:/workspace/test.py
       - ./train.py:/workspace/train.py
+      - ./radius5_test:/workspace/radius5_test

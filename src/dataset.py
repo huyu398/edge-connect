@@ -69,6 +69,7 @@ class Dataset(torch.utils.data.Dataset):
 
         # load mask
         mask = self.load_mask(img, index)
+        mask = mask[..., 0]
 
         # load edge
         edge = self.load_edge(img_gray, index, mask)
@@ -79,6 +80,17 @@ class Dataset(torch.utils.data.Dataset):
             img_gray = img_gray[:, ::-1, ...]
             edge = edge[:, ::-1, ...]
             mask = mask[:, ::-1, ...]
+
+        base_size = 2 ** 3
+        w, h = img_gray.shape
+        def padding(array):
+            w_pad = (base_size - w) % base_size
+            h_pad = (base_size - h) % base_size
+            if len(array.shape) == 2:
+                return np.pad(array, [(0,w_pad), (0,h_pad)], 'constant')
+            else:
+                return np.pad(array, [(0,w_pad), (0,h_pad), (0,0)], 'constant')
+        img, img_gray, edge, mask = [padding(array) for array in (img, img_gray, edge, mask)]
 
         return self.to_tensor(img), self.to_tensor(img_gray), self.to_tensor(edge), self.to_tensor(mask)
 
