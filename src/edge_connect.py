@@ -6,6 +6,7 @@ from .dataset import Dataset
 from .models import EdgeModel, InpaintingModel
 from .utils import Progbar, create_dir, stitch_images, imsave
 from .metrics import PSNR, EdgeAccuracy
+from torchvision.utils import make_grid
 
 
 class EdgeConnect():
@@ -324,17 +325,27 @@ class EdgeConnect():
             # inpaint with edge model / joint model
             else:
                 try:
-                    edges = self.edge_model(images_gray, edges, masks).detach()
-                    outputs = self.inpaint_model(images, edges, masks)
+                    output_edges = self.edge_model(images_gray, edges, masks).detach()
+                    outputs = self.inpaint_model(images, output_edges, masks)
                     outputs_merged = (outputs * masks) + (images * (1 - masks))
                 except Exception as e:
                     print(e)
                     continue
 
-            output = self.postprocess(outputs_merged)[0]
             path = os.path.join(self.results_path, name)
             print(index, name)
 
+            output = make_grid([
+                self.postprocess(images)[0],
+                self.postprocess(images_gray)[0].expand(3, -1, -1),
+                self.postprocess(edges)[0].expand(3, -1, -1),
+                self.postprocess(masks)[0].expand(3, -1, -1),
+                self.postprocess(images_gray * (1 - masks) + masks)[0].expand(3, -1, -1),
+                self.postprocess(output_edges)[0].expand(3, -1, -1),
+                self.postprocess(outputs * (1 - masks) + masks)[0].expand(3, -1, -1),
+                self.postprocess(outputs)[0],
+                self.postprocess(outputs_merged)[0],
+            ], nrow=3, padding=0).permute(1,2,0)
             imsave(output, path)
 
             if self.debug:
@@ -415,5 +426,5 @@ class EdgeConnect():
     def postprocess(self, img):
         # [0, 1] => [0, 255]
         img = img * 255.0
-        img = img.permute(0, 2, 3, 1)
+        # img = img.permute(0, 2, 3, 1)
         return img.int()

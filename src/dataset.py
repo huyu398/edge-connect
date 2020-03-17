@@ -69,7 +69,6 @@ class Dataset(torch.utils.data.Dataset):
 
         # load mask
         mask = self.load_mask(img, index)
-        mask = mask[..., 0]
 
         # load edge
         edge = self.load_edge(img_gray, index, mask)
@@ -129,12 +128,12 @@ class Dataset(torch.utils.data.Dataset):
         imgh, imgw = img.shape[0:2]
         mask_type = self.mask
 
-        if self.training is False:
-            mask_index = index % len(self.mask_data)
-            mask = imread(self.mask_data[mask_index])
-            mask = self.resize(mask, imgh, imgw)
-            mask = (mask > 0).astype(np.uint8) * 255       # threshold due to interpolation
-            return mask
+        # if self.training is False:
+        #     mask_index = index % len(self.mask_data)
+        #     mask = imread(self.mask_data[mask_index])
+        #     mask = self.resize(mask, imgh, imgw)
+        #     mask = (mask > 0).astype(np.uint8) * 255       # threshold due to interpolation
+        #     return mask
 
         # external + random block
         if mask_type == 4:
