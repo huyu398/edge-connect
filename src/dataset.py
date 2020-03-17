@@ -110,7 +110,7 @@ class Dataset(torch.utils.data.Dataset):
             if sigma == 0:
                 sigma = random.randint(1, 4)
 
-            return canny(img, sigma=sigma, mask=mask).astype(np.float)
+            return canny(img, sigma=sigma).astype(np.float)
 
         # external
         else:
@@ -120,7 +120,7 @@ class Dataset(torch.utils.data.Dataset):
 
             # non-max suppression
             if self.nms == 1:
-                edge = edge * canny(img, sigma=sigma, mask=mask)
+                edge = edge * canny(img, sigma=sigma)
 
             return edge
 
